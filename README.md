@@ -370,6 +370,33 @@ docker compose logs prefect-runner
 docker exec lab28-kafka-1 kafka-topics --list --bootstrap-server localhost:9092
 ```
 
+## Trạng Thái Verify Local (không cần Kaggle)
+
+Đã verify bằng Docker Compose thật (không mock) trong quá trình chuẩn bị nộp bài:
+
+- [x] Tất cả services local `Up`: `docker compose ps`
+- [x] Ingest → Kafka: `scripts/01_ingest_to_kafka.py`
+- [x] Kafka → Prefect → Delta Lake: deployment `kafka-to-delta` chạy được, ra file parquet, không reprocessing trùng lặp
+- [x] Delta Lake → Feast (Redis): `scripts/03_delta_to_feast.py`
+- [x] Prometheus scrape đúng `api-gateway` job
+- [x] Grafana có datasource + dashboard "Lab28 API Gateway" tự động
+- [x] API Gateway trả lời graceful (200 + `degraded: true`) khi Qdrant/vLLM không tới được
+- [x] Smoke tests: 7/8 passing (`pytest smoke-tests/ -v`)
+- [x] Production readiness: 9/10 = 90% (`python scripts/production_readiness_check.py`), vượt target >80%
+
+**Cần bạn tự chạy trước khi nộp** (cần Kaggle GPU thật, không verify được ở môi
+trường chuẩn bị bài này):
+- `scripts/05_embed_to_qdrant.py` (cần `EMBED_NGROK_URL` thật) — đây cũng là lý do
+  duy nhất khiến 1/8 smoke test (`test_kafka_ingest_and_qdrant_store`) và 1/10
+  readiness check (`Collection exists`) chưa pass: collection `documents` trong
+  Qdrant chỉ được tạo bởi script này.
+- Smoke test happy-path gọi LLM thật (cần `VLLM_NGROK_URL` thật) — lưu ý test này
+  hiện PASS ngay cả khi chưa có Kaggle, vì API Gateway trả về câu trả lời
+  "degraded" hợp lệ (>10 ký tự, <2s); test không kiểm tra field `degraded`, nên
+  đừng chỉ dựa vào test này để xác nhận vLLM thật đã hoạt động.
+- `scripts/09_verify_observability.py` phần LangSmith (cần `LANGCHAIN_API_KEY` thật)
+- Toàn bộ 5 screenshots theo `screenshots/README.md`
+
 ## Nộp Bài
 
 Xem `SUBMISSION.md` ở thư mục gốc project.
