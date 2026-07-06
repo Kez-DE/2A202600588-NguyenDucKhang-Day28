@@ -34,7 +34,6 @@ Kaggle (GPU T4/P100):
 ### 1. Khởi động Local Stack
 
 ```bash
-cd lab28
 docker compose up -d
 docker compose ps  # Kiểm tra tất cả services Up
 ```

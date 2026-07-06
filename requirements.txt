@@ -1,0 +1,12 @@
+# requirements.txt — for running scripts/ and smoke-tests/ from the host.
+# Recommended Python: 3.10–3.12 (some pins below don't yet have prebuilt
+# wheels for very new Python releases like 3.13/3.14).
+numpy<2
+pytest==8.2.0
+requests==2.32.3
+kafka-python==2.0.2
+redis==5.0.8
+pandas==2.1.0
+pyarrow==14.0.0
+qdrant-client==1.9.0
+langsmith==0.1.99
