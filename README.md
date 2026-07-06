@@ -357,11 +357,11 @@ docker compose down -v
 docker compose up -d
 ```
 
-**Prefect worker không connect:**
+**Prefect flow không chạy:**
 ```bash
 # Check Prefect UI: http://localhost:4200
-# Đảm bảo worker đang chạy:
-docker compose logs prefect-worker
+# Đảm bảo flow runner đang chạy:
+docker compose logs prefect-runner
 ```
 
 **Kafka consumer lag:**

@@ -30,17 +30,16 @@ services:
     volumes:
       - prefect_data:/root/.prefect
 
-  prefect-worker:
+  prefect-runner:
     image: prefecthq/prefect:2.14.0-python3.10
     command: >
-      sh -c "prefect work-pool create --type process lab28-worker 2>/dev/null || true
-      && prefect worker start -p lab28-worker -n lab28-worker"
+      sh -c "pip install -q -r /opt/prefect/flows/requirements.txt &&
+      python /opt/prefect/flows/kafka_to_delta.py"
     environment:
       PREFECT_API_URL: http://prefect-orion:4200/api
     volumes:
       - ./prefect/flows:/opt/prefect/flows
       - ./delta-lake:/opt/delta-lake
-      - /var/run/docker.sock:/var/run/docker.sock
     depends_on: [prefect-orion, kafka]
 
   # ── Vector Store (Qdrant) ─────────────────────────────────
