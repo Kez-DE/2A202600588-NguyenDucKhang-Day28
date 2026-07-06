@@ -10,7 +10,8 @@ def consume_and_process():
     """Consume data from Kafka topic"""
     consumer = KafkaConsumer(
         "data.raw",
-        bootstrap_servers="kafka:9092",
+        bootstrap_servers="kafka:29092",
+        group_id="lab28-kafka-to-delta",
         auto_offset_reset="earliest",
         consumer_timeout_ms=5000,
         value_deserializer=lambda m: json.loads(m.decode())
@@ -18,6 +19,7 @@ def consume_and_process():
     records = []
     for msg in consumer:
         records.append(msg.value)
+    consumer.close()
 
     print(f"Consumed {len(records)} records from Kafka")
     return records

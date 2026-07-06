@@ -1,4 +1,5 @@
 # docker-compose.yml
+name: lab28
 version: "3.9"
 
 services:
@@ -18,7 +19,15 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092
+      # Two listeners: host-side scripts connect via localhost:9092;
+      # other containers (e.g. prefect-runner) connect via kafka:29092.
+      # A single "localhost" advertised listener would make Kafka hand
+      # containers metadata pointing back to their own localhost, which
+      # isn't the broker — breaking any in-container consumer/producer.
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   # ── Prefect ───────────────────────────────────────────────
